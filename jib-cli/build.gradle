@@ -2,6 +2,7 @@ plugins {
   id 'application'
   id 'net.researchgate.release'
   id 'eclipse'
+  id 'org.graalvm.buildtools.native' version '0.9.14'
 }
 
 ext {
@@ -75,3 +76,43 @@ eclipse.classpath.file.whenMerged {
   }
 }
 /* ECLIPSE */
+
+/* NATIVE COMPILE */
+graalvmNative {
+  // Reference: https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html#configuration-options
+  agent {
+    // 'agent' means 'native-image-agent' which is provided by GraalVM
+    defaultMode = 'standard'
+    enabled = false
+    modes {
+      standard {
+      }
+    }
+
+    builtinCallerFilter = true
+    builtinHeuristicFilter = true
+    enableExperimentalPredefinedClasses = false
+    enableExperimentalUnsafeAllocationTracing = false
+    trackReflectionMetadata = true
+
+    metadataCopy {
+      outputDirectories.add('src/main/resources/META-INF/native-image')
+      mergeWithExisting = true
+    }
+  }
+
+  binaries {
+    main {
+      javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(11)
+        vendor = JvmVendorSpec.matching("GraalVM Community")
+      }
+      mainClass = cliMainClass
+      fallback = false
+      debug = true
+      verbose = true
+      useFatJar = true
+    }
+  }
+}
+/* NATIVE COMPILE */

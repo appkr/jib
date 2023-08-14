@@ -1,0 +1,70 @@
+name: Native Image
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build on ${{ matrix.os }}
+    # "macos-aarch64" is NOT provided by github
+    # self-hosted runners: https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: GraalVM setup
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: 22.3.3
+          java-version: '11'
+          cache: gradle
+          components: native-image
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: set env vars
+        id: vars
+        run: |
+          echo "::set-output name=VERSION::$(cat jib-cli/gradle.properties | head -n 1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+-.*')"
+          echo ${{ steps.vars.outputs.VERSION }}
+
+      - name: build an executable and native image
+        run: |
+          ./gradlew :jib-cli:installDist
+          ./gradlew nativeCompile -DgraalvmNative.agent.enabled=true
+          PWD=`pwd`
+          cd jib-cli/build/native/nativeCompile
+          zip jib-cli-${{ steps.vars.outputs.VERSION }}-${{ matrix.os }}.zip jib-cli
+          cd $PWD
+
+      - name: updload native image
+        uses: actions/upload-artifact@v2
+        with:
+          name: native
+          path: jib-cli/build/native/nativeCompile/jib-cli-*.zip
+          retention-days: 1
+
+  # release
+  # https://electricui.com/blog/github-actions
+  release:
+    name: create prerelease
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+      - name: display fetched artifacts
+        run: ls -alR
+      - name: create a github release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: latest
+          prerelease: true
+          title: Development Build
+          files: |
+            native/jib-cli-*.zip
