@@ -105,14 +105,17 @@ graalvmNative {
     main {
       javaLauncher = javaToolchains.launcherFor {
         languageVersion = JavaLanguageVersion.of(11)
-        vendor = JvmVendorSpec.matching("GraalVM Community")
+        vendor = JvmVendorSpec.matching('GraalVM Community')
       }
       mainClass = cliMainClass
       fallback = false
       debug = true
       verbose = true
       useFatJar = true
+      buildArgs.add('--enable-url-protocols=https')
     }
   }
 }
+
+nativeCompile.dependsOn installDist
 /* NATIVE COMPILE */

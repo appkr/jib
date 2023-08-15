@@ -217,6 +217,12 @@
   "queryAllDeclaredConstructors":true
 },
 {
+  "name":"com.google.cloud.tools.jib.docker.json.DockerManifestEntryTemplate",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
   "name":"com.google.cloud.tools.jib.image.json.BuildableManifestTemplate",
   "queryAllDeclaredMethods":true
 },
@@ -343,20 +349,6 @@
 },
 {
   "name":"com.google.cloud.tools.jib.registry.RegistryAuthenticator$AuthenticationResponseTemplate",
-  "allDeclaredFields":true,
-  "queryAllDeclaredMethods":true,
-  "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.google.cloud.tools.jib.registry.RegistryClient$AccessClaim",
-  "allDeclaredFields":true,
-  "queryAllDeclaredMethods":true,
-  "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.google.cloud.tools.jib.registry.RegistryClient$TokenPayloadTemplate",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
