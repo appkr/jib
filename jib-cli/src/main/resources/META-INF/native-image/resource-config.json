@@ -1,0 +1,18 @@
+{
+  "resources":{
+  "includes":[
+    {
+      "pattern":"\\Qcom/google/api/client/http/google-http-client.properties\\E"
+    }, 
+    {
+      "pattern":"\\Qcommons-logging.properties\\E"
+    }, 
+    {
+      "pattern":"\\Qmozilla/public-suffix-list.txt\\E"
+    }, 
+    {
+      "pattern":"\\Qorg/apache/http/client/version.properties\\E"
+    }
+  ]},
+  "bundles":[]
+}
